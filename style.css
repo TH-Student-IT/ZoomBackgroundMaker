@@ -1,4 +1,202 @@
+@font-face {
+  font-family: "GenShinGothic";
+  src: url("font/GenShinGothic-Heavy.woff2") format("woff2");
+  /* url("font/GenShinGothic-Medium.woff2") format("woff2"); */
+}
+
+:root {
+  --main-theme-color: #007aff;
+}
+
 * {
   margin: 0;
   box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  width: 100dvw;
+}
+
+body {
+  color: #444;
+  background-color: #fafafa;
+  font-family: "Arial", sans-serif;
+  width: 100dvw;
+}
+
+main {
+  background-color: white;
+  width: 90%;
+  max-width: 1000px;
+  padding: 4em 4em;
+  margin: 4em auto;
+  border-radius: 0.5em;
+  box-shadow: 0px 0px 29px 7px #dedede;
+}
+
+h1 {
+  font-size: 2.5em;
+  font-weight: bold;
+  width: fit-content;
+  border-bottom: 0.175em solid var(--main-theme-color);
+  padding: 0.1em 0.25em;
+  margin: 0 auto 0.5em;
+}
+
+#mainCanvas {
+  display: block;
+  width: 90%;
+  margin: 4em auto;
+  aspect-ratio: 16 / 9;
+  border-radius: 0.75em;
+  box-shadow: 0px 0px 29px 7px #dedede;
+}
+
+.image-container {
+  width: 50%;
+  flex-shrink: 0;
+}
+
+.image-container img {
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+  border-radius: 0.375em;
+  box-shadow: 0px 0px 29px 7px #dedede;
+}
+
+.description {
+  display: flex;
+  justify-self: center;
+  align-items: center;
+  font-size: 2em;
+  font-weight: bold;
+  word-break: keep-all;
+  margin: 5em 2em;
+  column-gap: 1em;
+}
+
+.annotation {
+  display: block;
+  font-size: 1rem;
+  margin-top: 0.5em;
+  text-align: center;
+}
+
+/* MARK: selectタグ */
+
+.select {
+  display: inline-flex;
+  align-items: center;
+  position: relative;
+}
+
+.select::after {
+  position: absolute;
+  right: 15px;
+  width: 10px;
+  height: 7px;
+  background-color: #535353;
+  clip-path: polygon(0 0, 100% 0, 50% 100%);
+  content: "";
+  pointer-events: none;
+}
+
+.select select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  padding: 0.75em 1.75em 0.75em 0.75em;
+  font-size: 0.75em;
+  border: 1px solid #dedede;
+  box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.1);
+  border-radius: 0.375em;
+}
+
+.select select:hover {
+  background-color: #f0f0f0;
+  cursor: pointer;
+}
+
+.select select:focus {
+  outline: none;
+}
+
+.select select::picker(select) {
+  appearance: base-select;
+  border: none;
+  border-radius: 5px;
+}
+
+option,
+optgroup {
+  border: none;
+}
+
+.input-container {
+  font-size: 1.25em;
+  border: 3px solid #dedede;
+  border-radius: 0.5em;
+  padding: 2em;
+  margin: 2em;
+}
+
+.input-section-title {
+  font-size: 1.125em;
+  font-weight: bold;
+  margin: 1em 0 0.25em;
+}
+
+/* MARK: inputタグ */
+input {
+  border: 1px solid #dedede;
+  padding: 0.5em;
+  font-size: 1em;
+  border-radius: 0.25em;
+  box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.1);
+  outline-color: var(--main-theme-color);
+}
+
+.input-field {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.75em;
+  margin-right: 5em;
+}
+
+.input-field label {
+  font-size: 1.05em;
+  min-width: 190px;
+  display: inline-block;
+  padding-right: 1em;
+}
+
+.input-field input {
+  flex: 1;
+}
+
+/* MARK: ダウンロードボタン */
+#downloadButton {
+  display: block;
+  width: 50%;
+  margin: 0 auto;
+  border: none;
+  background-color: var(--main-theme-color);
+  color: white;
+  font-size: 1.25em;
+  font-weight: bold;
+  padding: 0.75em 0;
+  border-radius: 0.5em;
+  cursor: pointer;
+  box-shadow: 0px 0px 29px 7px #dedede;
+  transition-duration: 300ms;
+}
+
+#downloadButton:hover {
+  background-color: #005bb5;
+}
+
+#downloadButton:active {
+  background-color: #004a8d;
 }
