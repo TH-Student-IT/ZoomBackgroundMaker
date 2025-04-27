@@ -150,18 +150,17 @@ downloadButton.addEventListener("click", () => {
   const bufferCtx = buffer.getContext("2d");
   buffer.width = 1920;
   buffer.height = 1080;
-  bufferCtx.fillStyle = "#ffffff";
-  bufferCtx.fillRect(0, 0, buffer.width, buffer.height);
 
   // 背景画像を先に描画
   const backgroundImage = new Image();
   backgroundImage.src = "img/ZoomBackground_base_2.png";
   backgroundImage.onload = () => {
-    // 先に背景を描画
     bufferCtx.drawImage(backgroundImage, 0, 0, buffer.width, buffer.height);
 
-    // その後でテキストを描画
-    const UPSCALE_FACTOR = 1920 / canvas.width;
+    // ここが重要: devicePixelRatioの影響を取り除いたアップスケールファクターを計算
+    // canvas.widthはすでにratioが掛けられているので、元のサイズに戻してから計算する
+    const displayWidth = canvas.width / ratio;
+    const UPSCALE_FACTOR = 1920 / displayWidth;
 
     // 入力値の取得
     const name = inputName.value || "";
