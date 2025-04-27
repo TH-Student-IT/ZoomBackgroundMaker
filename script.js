@@ -144,23 +144,88 @@ function handleResize() {
   updateCanvas(); // 再描画
 }
 
-// ダウンロードボタンの処理も統一関数を使用
+// ダウンロードボタンの処理を修正
 downloadButton.addEventListener("click", () => {
   const buffer = document.createElement("canvas");
   const bufferCtx = buffer.getContext("2d");
   buffer.width = 1920;
   buffer.height = 1080;
+  bufferCtx.fillStyle = "#ffffff";
+  bufferCtx.fillRect(0, 0, buffer.width, buffer.height);
 
-  // 統一された描画関数を使用
-  const UPSCALE_FACTOR = 1920 / canvas.width;
-  renderCanvas(bufferCtx, buffer, UPSCALE_FACTOR);
-
-  // 背景画像とロゴを描画（高解像度版）
+  // 背景画像を先に描画
   const backgroundImage = new Image();
   backgroundImage.src = "img/ZoomBackground_base_2.png";
   backgroundImage.onload = () => {
+    // 先に背景を描画
     bufferCtx.drawImage(backgroundImage, 0, 0, buffer.width, buffer.height);
 
+    // その後でテキストを描画
+    const UPSCALE_FACTOR = 1920 / canvas.width;
+
+    // 入力値の取得
+    const name = inputName.value || "";
+    const nameKana = inputNameKana.value || "";
+    const department = inputDepartment.value;
+    const grade = inputGrade.value;
+    const departmentString = `IT学部 ${
+      DEPARTMENT_MAP[department] || department
+    } ${grade}年`;
+
+    // フォントサイズを明示的に設定
+    const fontSize = {
+      department: DEPARTMENT_CHAR_SIZE * UPSCALE_FACTOR,
+      name: NAME_CHAR_SIZE * UPSCALE_FACTOR,
+      nameKana: NAME_KANA_CHAR_SIZE * UPSCALE_FACTOR,
+    };
+
+    const margin = {
+      default: DEFAULT_MARGIN * UPSCALE_FACTOR,
+      department: DEPARTMENT_MARGIN * UPSCALE_FACTOR,
+      nameKana: NAME_KANA_MARGIN * UPSCALE_FACTOR,
+    };
+
+    // テキスト描画設定
+    bufferCtx.textAlign = "right";
+    bufferCtx.fillStyle = "#333333";
+
+    // 学科情報の描画
+    bufferCtx.font = `900 ${fontSize.department}px "GenShinGothic"`;
+    const deptMetrics = bufferCtx.measureText(departmentString);
+    const deptHeight =
+      deptMetrics.actualBoundingBoxAscent +
+      deptMetrics.actualBoundingBoxDescent;
+    bufferCtx.fillText(
+      departmentString,
+      buffer.width - margin.default,
+      margin.department + deptHeight / 2
+    );
+
+    // 名前の描画
+    bufferCtx.font = `900 ${fontSize.name}px "GenShinGothic"`;
+    const nameMetrics = bufferCtx.measureText(name);
+    const nameHeight =
+      nameMetrics.actualBoundingBoxAscent +
+      nameMetrics.actualBoundingBoxDescent;
+    bufferCtx.fillText(
+      name,
+      buffer.width - margin.default,
+      buffer.height / 2 - margin.default + nameHeight / 2
+    );
+
+    // フリガナの描画
+    bufferCtx.font = `900 ${fontSize.nameKana}px "GenShinGothic"`;
+    const kanaMetrics = bufferCtx.measureText(nameKana);
+    const kanaHeight =
+      kanaMetrics.actualBoundingBoxAscent +
+      kanaMetrics.actualBoundingBoxDescent;
+    bufferCtx.fillText(
+      nameKana,
+      buffer.width - margin.default,
+      buffer.height / 2 + margin.nameKana + kanaHeight / 2
+    );
+
+    // 最後にロゴを描画
     const logo = new Image();
     logo.src = "img/HAL_logo.png";
     logo.onload = () => {
