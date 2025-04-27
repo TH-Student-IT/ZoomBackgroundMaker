@@ -150,6 +150,8 @@ downloadButton.addEventListener("click", () => {
   const bufferCtx = buffer.getContext("2d");
   buffer.width = 1920;
   buffer.height = 1080;
+  bufferCtx.fillStyle = "#ffffff";
+  bufferCtx.fillRect(0, 0, buffer.width, buffer.height);
 
   // 背景画像を先に描画
   const backgroundImage = new Image();
