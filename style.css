@@ -153,6 +153,17 @@ optgroup {
   margin: 1em 0 0.25em;
 }
 
+.contact-container {
+  margin-top: 2em;
+  font-weight: bold;
+}
+
+.contact {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 /* MARK: inputタグ */
 input {
   border: 1px solid #dedede;
