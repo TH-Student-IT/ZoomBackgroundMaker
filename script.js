@@ -1,10 +1,10 @@
 // MARK: 定数
-const DEPARTMENT_CHAR_SIZE = 30; // 学部名 / 学科名のフォントサイズ
+const DEPARTMENT_CHAR_SIZE = 26; // 学部名 / 学科名のフォントサイズ
 const NAME_CHAR_SIZE = 36; // 名前のフォントサイズ
 const NAME_KANA_CHAR_SIZE = 18;
 
-const DEPARTMENT_MARGIN = 40; // 学部名 / 学科名のマージン
-const NAME_KANA_MARGIN = 30; // 名前カナのマージン
+const DEPARTMENT_MARGIN = 30; // 学部名 / 学科名のマージン
+const NAME_KANA_MARGIN = 20; // 名前カナのマージン
 const DEFAULT_MARGIN = 20; // 名前のマージン
 
 const SCHOOL_LOGO_SCALE = 0.35; // ロゴのスケール
@@ -21,30 +21,6 @@ const inputDepartment = document.getElementById("department");
 const inputGrade = document.getElementById("grade");
 const downloadButton = document.getElementById("downloadButton");
 
-function updateCanvas() {
-  const name = inputName.value;
-  const nameKana = inputNameKana.value;
-  const department = inputDepartment.value;
-  const grade = inputGrade.value;
-  const departmentString = `IT学部 ${
-    DEPARTMENT_MAP[department] || department
-  } ${grade}年`;
-
-  console.log(name, nameKana, department, grade, departmentString);
-
-  ctx.fillStyle = "#ffffff"; // 背景色を白に設定
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
-  drawBackgroundImage();
-  drawName(name);
-  drawNameKana(nameKana);
-  drawDepartment(departmentString);
-}
-
-inputName.addEventListener("input", updateCanvas);
-inputNameKana.addEventListener("input", updateCanvas);
-inputDepartment.addEventListener("input", updateCanvas);
-inputGrade.addEventListener("input", updateCanvas);
-
 // キャンバスの取得と設定
 const ratio = devicePixelRatio || 1;
 const canvas = document.getElementById("mainCanvas");
@@ -58,106 +34,128 @@ function initializeCanvas() {
   canvas.height = rect.height * ratio;
 }
 
-// 背景画像の読み込み
-function drawBackgroundImage() {
-  const backgroundImage = new Image();
-  backgroundImage.src = "img/ZoomBackground_base_2.png";
-
-  backgroundImage.onload = () => {
-    ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height);
-    drawOrgnizationLogo();
+// 共通の描画関数を定義（プレビューとダウンロードで共用）
+function renderCanvas(ctx, canvas, scale = 1) {
+  // スケールに応じたサイズ計算
+  const fontSize = {
+    department: DEPARTMENT_CHAR_SIZE * scale,
+    name: NAME_CHAR_SIZE * scale,
+    nameKana: NAME_KANA_CHAR_SIZE * scale,
   };
-}
 
-// 名前の描画
-function drawName(nameString) {
-  const nameFontSize = NAME_CHAR_SIZE * ratio;
-  ctx.font = `900 ${nameFontSize}px "GenShinGothic"`;
+  const margin = {
+    default: DEFAULT_MARGIN * scale,
+    department: DEPARTMENT_MARGIN * scale,
+    nameKana: NAME_KANA_MARGIN * scale,
+  };
+
+  // 背景色を設定
+  ctx.fillStyle = "#ffffff";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  // 入力値の取得
+  const name = inputName.value || "";
+  const nameKana = inputNameKana.value || "";
+  const department = inputDepartment.value;
+  const grade = inputGrade.value;
+  const departmentString = `IT学部 ${
+    DEPARTMENT_MAP[department] || department
+  } ${grade}年`;
+
+  // テキスト描画 - textBaselineを使わない統一方法
   ctx.textAlign = "right";
-  ctx.textBaseline = "middle";
   ctx.fillStyle = "#333333";
 
-  // Position name on right side
-  ctx.fillText(
-    nameString,
-    canvas.width - DEFAULT_MARGIN,
-    canvas.height / 2 - DEFAULT_MARGIN * ratio
-  );
-}
-
-// 名前カナの描画
-function drawNameKana(nameKanaString) {
-  const nameKanaFontSize = NAME_KANA_CHAR_SIZE * ratio;
-  ctx.font = `900 ${nameKanaFontSize}px "GenShinGothic"`;
-  ctx.textAlign = "right";
-  ctx.textBaseline = "middle";
-  ctx.fillStyle = "#333333";
-
-  // Position name on right side
-  ctx.fillText(
-    nameKanaString,
-    canvas.width - DEFAULT_MARGIN,
-    canvas.height / 2 +
-      NAME_KANA_MARGIN +
-      nameKanaFontSize / 2 -
-      DEFAULT_MARGIN * ratio
-  );
-}
-
-// 学科の描画
-function drawDepartment(departmentString) {
-  const departmentFontSize = DEPARTMENT_CHAR_SIZE * ratio;
-  ctx.font = `900 ${departmentFontSize}px "GenShinGothic"`;
-  ctx.textAlign = "right";
-  ctx.textBaseline = "middle";
-  ctx.fillStyle = "#333333";
-
-  // Position name on right side
+  // 学科情報の描画
+  ctx.font = `900 ${fontSize.department}px "GenShinGothic"`;
+  const deptMetrics = ctx.measureText(departmentString);
+  // テキストの高さ情報を取得（下に向かって負の値になる）
+  const deptHeight =
+    deptMetrics.actualBoundingBoxAscent + deptMetrics.actualBoundingBoxDescent;
   ctx.fillText(
     departmentString,
-    canvas.width - DEFAULT_MARGIN,
-    DEPARTMENT_MARGIN
+    canvas.width - margin.default,
+    margin.department + deptHeight / 2
   );
+
+  // 名前の描画
+  ctx.font = `900 ${fontSize.name}px "GenShinGothic"`;
+  const nameMetrics = ctx.measureText(name);
+  const nameHeight =
+    nameMetrics.actualBoundingBoxAscent + nameMetrics.actualBoundingBoxDescent;
+  ctx.fillText(
+    name,
+    canvas.width - margin.default,
+    canvas.height / 2 - margin.default + nameHeight / 2
+  );
+
+  // フリガナの描画
+  ctx.font = `900 ${fontSize.nameKana}px "GenShinGothic"`;
+  const kanaMetrics = ctx.measureText(nameKana);
+  const kanaHeight =
+    kanaMetrics.actualBoundingBoxAscent + kanaMetrics.actualBoundingBoxDescent;
+  ctx.fillText(
+    nameKana,
+    canvas.width - margin.default,
+    canvas.height / 2 + margin.nameKana + kanaHeight / 2
+  );
+
+  // ロゴの描画（後で呼び出し元で処理）
 }
 
-// キャンバスに学校ロゴを描画
-function drawOrgnizationLogo() {
-  const LOGO_SCALE = SCHOOL_LOGO_SCALE; // ロゴのスケール
-  const schoolLogo = new Image();
-  schoolLogo.src = "img/HAL_logo.png";
-  schoolLogo.onload = () => {
-    const LOGO_HEIGHT = schoolLogo.height * ratio * LOGO_SCALE;
-    const LOGO_WIDTH = LOGO_HEIGHT * (schoolLogo.width / schoolLogo.height); // ロゴの幅
-    const LOGO_MARGIN = DEFAULT_MARGIN * ratio; // ロゴのマージン
+// キャンバスの更新関数を単純化
+function updateCanvas() {
+  renderCanvas(ctx, canvas, ratio);
 
-    console.log("Logo loaded", LOGO_WIDTH, LOGO_HEIGHT);
-    ctx.drawImage(
-      schoolLogo,
-      canvas.width - LOGO_WIDTH - LOGO_MARGIN,
-      canvas.height - LOGO_HEIGHT - LOGO_MARGIN,
-      LOGO_WIDTH,
-      LOGO_HEIGHT
-    );
+  // 背景画像とロゴを描画
+  const backgroundImage = new Image();
+  backgroundImage.src = "img/ZoomBackground_base_2.png";
+  backgroundImage.onload = () => {
+    ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height);
+
+    // ロゴの描画
+    const schoolLogo = new Image();
+    schoolLogo.src = "img/HAL_logo.png";
+    schoolLogo.onload = () => {
+      const LOGO_HEIGHT = schoolLogo.height * ratio * SCHOOL_LOGO_SCALE;
+      const LOGO_WIDTH = LOGO_HEIGHT * (schoolLogo.width / schoolLogo.height);
+      const LOGO_MARGIN = DEFAULT_MARGIN * ratio;
+
+      ctx.drawImage(
+        schoolLogo,
+        canvas.width - LOGO_WIDTH - LOGO_MARGIN,
+        canvas.height - LOGO_HEIGHT - LOGO_MARGIN,
+        LOGO_WIDTH,
+        LOGO_HEIGHT
+      );
+    };
   };
 }
+
+inputName.addEventListener("input", updateCanvas);
+inputNameKana.addEventListener("input", updateCanvas);
+inputDepartment.addEventListener("input", updateCanvas);
+inputGrade.addEventListener("input", updateCanvas);
 
 // 再描画処理
 window.addEventListener("resize", handleResize);
 function handleResize() {
   initializeCanvas();
-  drawBackgroundImage(); // 再描画
+  updateCanvas(); // 再描画
 }
 
-// ダウンロードボタンの処理
+// ダウンロードボタンの処理も統一関数を使用
 downloadButton.addEventListener("click", () => {
-  const UPSCALE_FACTOR = 1920 / canvas.width; // アップスケールの倍率
   const buffer = document.createElement("canvas");
   const bufferCtx = buffer.getContext("2d");
   buffer.width = 1920;
   buffer.height = 1080;
-  bufferCtx.fillStyle = "#ffffff"; // 背景色を白に設定
-  bufferCtx.fillRect(0, 0, buffer.width, buffer.height);
 
+  // 統一された描画関数を使用
+  const UPSCALE_FACTOR = 1920 / canvas.width;
+  renderCanvas(bufferCtx, buffer, UPSCALE_FACTOR);
+
+  // 背景画像とロゴを描画（高解像度版）
   const backgroundImage = new Image();
   backgroundImage.src = "img/ZoomBackground_base_2.png";
   backgroundImage.onload = () => {
@@ -166,10 +164,10 @@ downloadButton.addEventListener("click", () => {
     const logo = new Image();
     logo.src = "img/HAL_logo.png";
     logo.onload = () => {
-      const LOGO_SCALE = SCHOOL_LOGO_SCALE * UPSCALE_FACTOR; // ロゴのスケール
-      const LOGO_HEIGHT = logo.height * ratio * LOGO_SCALE;
-      const LOGO_WIDTH = LOGO_HEIGHT * (logo.width / logo.height); // ロゴの幅
-      const LOGO_MARGIN = DEFAULT_MARGIN * ratio * UPSCALE_FACTOR; // ロゴのマージン
+      const LOGO_SCALE = SCHOOL_LOGO_SCALE * UPSCALE_FACTOR;
+      const LOGO_HEIGHT = logo.height * LOGO_SCALE;
+      const LOGO_WIDTH = LOGO_HEIGHT * (logo.width / logo.height);
+      const LOGO_MARGIN = DEFAULT_MARGIN * UPSCALE_FACTOR;
 
       bufferCtx.drawImage(
         logo,
@@ -179,48 +177,7 @@ downloadButton.addEventListener("click", () => {
         LOGO_HEIGHT
       );
 
-      const department = inputDepartment.value;
-      const grade = inputGrade.value;
-      const departmentString = `IT学部 ${
-        DEPARTMENT_MAP[department] || department
-      } ${grade}年`;
-
-      // Department text
-      const departmentFontSize = DEPARTMENT_CHAR_SIZE * UPSCALE_FACTOR;
-      bufferCtx.font = `900 ${departmentFontSize}px "GenShinGothic"`;
-      bufferCtx.textAlign = "right";
-      bufferCtx.textBaseline = "middle";
-      bufferCtx.fillStyle = "#333333";
-      bufferCtx.fillText(
-        departmentString,
-        buffer.width - DEFAULT_MARGIN * UPSCALE_FACTOR,
-        DEPARTMENT_MARGIN * UPSCALE_FACTOR
-      );
-
-      // Name text
-      const name = inputName.value;
-      const nameFontSize = NAME_CHAR_SIZE * UPSCALE_FACTOR;
-      bufferCtx.font = `900 ${nameFontSize}px "GenShinGothic"`;
-      bufferCtx.fillText(
-        name,
-        buffer.width - DEFAULT_MARGIN * UPSCALE_FACTOR,
-        buffer.height / 2 - DEFAULT_MARGIN * UPSCALE_FACTOR
-      );
-
-      // Name kana text
-      const nameKana = inputNameKana.value;
-      const nameKanaFontSize = NAME_KANA_CHAR_SIZE * UPSCALE_FACTOR;
-      bufferCtx.font = `900 ${nameKanaFontSize}px "GenShinGothic"`;
-      bufferCtx.fillText(
-        nameKana,
-        buffer.width - DEFAULT_MARGIN * UPSCALE_FACTOR,
-        buffer.height / 2 +
-          NAME_KANA_MARGIN * UPSCALE_FACTOR +
-          nameKanaFontSize / 2 -
-          DEFAULT_MARGIN * UPSCALE_FACTOR
-      );
-
-      // Create download link with high-resolution image
+      // ダウンロード処理
       const link = document.createElement("a");
       link.download = "zoom_background.png";
       link.href = buffer.toDataURL("image/png");
@@ -243,7 +200,6 @@ function checkAgreement() {
     imageMakerSection.style.display = "block";
     // 初期化処理
     initializeCanvas();
-    drawBackgroundImage();
     updateCanvas(); // 初期値を描画
   } else {
     imageMakerSection.style.display = "none";
