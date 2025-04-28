@@ -52,10 +52,22 @@ h1 {
 #mainCanvas {
   display: block;
   width: 90%;
-  margin: 4em auto;
+  margin: 4em auto 2em;
   aspect-ratio: 16 / 9;
   border-radius: 0.75em;
   box-shadow: 0px 0px 29px 7px #dedede;
+}
+
+.notice {
+  text-align: center;
+  margin: 2em auto;
+}
+
+.copy {
+  color: #aaa;
+  text-align: center;
+  font-weight: bold;
+  margin: 3em 0 0;
 }
 
 .image-container {
