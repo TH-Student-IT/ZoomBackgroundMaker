@@ -120,7 +120,7 @@ function initializeCanvas() {
 function renderCanvas(ctx, canvas, scale = 1) {
   // スケールに応じたサイズ計算
   const fontSize = {
-    department: DEPARTMENT_CHAR_SIZE * scale + 4 * ratio,
+    department: DEPARTMENT_CHAR_SIZE * scale + (ratio > 1 ? 4 * ratio : 0),
     name: NAME_CHAR_SIZE * scale,
     nameKana: NAME_KANA_CHAR_SIZE * scale,
   };
@@ -324,7 +324,8 @@ downloadButton.addEventListener("click", () => {
 
     // フォントサイズを明示的に設定
     const fontSize = {
-      department: DEPARTMENT_CHAR_SIZE * UPSCALE_FACTOR + 4 * ratio,
+      department:
+        DEPARTMENT_CHAR_SIZE * UPSCALE_FACTOR + (ratio > 1 ? 4 * ratio : 0),
       name: NAME_CHAR_SIZE * UPSCALE_FACTOR,
       nameKana: NAME_KANA_CHAR_SIZE * UPSCALE_FACTOR,
     };
