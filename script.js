@@ -1,17 +1,93 @@
 // MARK: 定数
+const ratio = devicePixelRatio || 1;
+
 const DEPARTMENT_CHAR_SIZE = 26; // 学部名 / 学科名のフォントサイズ
 const NAME_CHAR_SIZE = 36; // 名前のフォントサイズ
 const NAME_KANA_CHAR_SIZE = 18;
 
-const DEPARTMENT_MARGIN = 30; // 学部名 / 学科名のマージン
+const DEPARTMENT_MARGIN = 30 + 2 * ratio; // 学部名 / 学科名のマージン
 const NAME_KANA_MARGIN = 20; // 名前カナのマージン
 const DEFAULT_MARGIN = 20; // 名前のマージン
+
+const DEPARTMENT_LENGTH_THRESHOLD = 24; // 学部名 / 学科名の長さの閾値
 
 const SCHOOL_LOGO_SCALE = 0.35; // ロゴのスケール
 
 // 学部名 / 学科名 対応表
 const DEPARTMENT_MAP = {
-  1: "高度情報処理学科",
+  IT学部: {
+    1: "高度情報学科 高度ITコース",
+    2: "高度情報学科 WEB開発コース",
+    3: "高度情報学科 AIシステム開発コース",
+    4: "高度情報学科 高度システムエンジニア専攻",
+    5: "高度情報学科 IoTネットワーク専攻",
+    6: "高度情報学科 サイバーセキュリティ専攻",
+  },
+  ゲーム学部: {
+    1: "ゲーム4年制学科 ゲーム制作コース",
+    2: "ゲーム4年制学科 ゲーム企画コース",
+    3: "ゲーム4年制学科 ゲームデザインコース",
+    4: "ゲーム4年制学科 VR・3Dゲームプログラマー専攻",
+    5: "ゲーム4年制学科 オンラインゲームプログラマー専攻",
+    6: "ゲーム4年制学科 スマートフォンゲームプログラマー専攻",
+    7: "ゲーム4年制学科 ゲームプランナー専攻",
+    8: "ゲーム4年制学科 ゲームシナリオライター専攻",
+    9: "ゲーム4年制学科 ゲームディレクター専攻",
+    10: "ゲーム4年制学科 ゲームデザイナー専攻",
+    11: "ゲーム4年制学科 ゲーム3Dキャラクターデザイナー専攻",
+    12: "ゲーム4年制学科 ゲームスマートフォンゲームデザイナー専攻",
+  },
+  CG学部: {
+    1: "CG・デザイン・アニメ四年制学科 CG映像コース",
+    2: "CG・デザイン・アニメ四年制学科 グラフィックデザインコース",
+    3: "CG・デザイン・アニメ四年制学科 イラストコース",
+    4: "CG・デザイン・アニメ四年制学科 アニメーションコース",
+    5: "CG・デザイン・アニメ四年制学科 3DCGクリエイター専攻",
+    6: "CG・デザイン・アニメ四年制学科 VFXアーティスト専攻",
+    7: "CG・デザイン・アニメ四年制学科 CGデザイナー専攻",
+    8: "CG・デザイン・アニメ四年制学科 イラストレーター専攻",
+    9: "CG・デザイン・アニメ四年制学科 アニメーター専攻",
+    10: "CG・デザイン・アニメ四年制学科 デジタル作画専攻",
+  },
+  カーデザイン学部: {
+    1: "カーデザイン学科 カーデザインコース",
+    2: "カーデザイン学科 カーモデラーコース",
+    3: "カーデザイン学科 カーデザイナー専攻",
+    4: "カーデザイン学科 次世代モビリティ開発専攻",
+    5: "カーデザイン学科 カーモデラー専攻",
+  },
+  ミュージック学部: {
+    1: "ミュージック学科 サウンドエンジニアコース",
+    2: "ミュージック学科 サウンドクリエイターコース",
+    3: "ミュージック学科 サウンドエンジニア専攻",
+    4: "ミュージック学科 サウンドクリエイター専攻",
+    5: "ミュージック学科 ゲームミュージック専攻",
+  },
+  ゲーム学部2年生課程: {
+    1: "ゲーム学科 2年制課程",
+    2: "ゲーム学科 ゲームプログラム専攻",
+    3: "ゲーム学科 キャラクターデザイン専攻",
+  },
+  CG学部2年制課程: {
+    1: "CG学科 2年制課程",
+    2: "CG学科 CGアニメーション専攻",
+    3: "CG学科 CGデザイン専攻",
+  },
+  WEB学部: {
+    1: "WEB学科 2年制課程",
+    2: "WEB学科 WEBプログラム専攻",
+    3: "WEB学科 WEBデザイン専攻",
+  },
+  情報処理学部: {
+    1: "情報処理学科 2年制課程",
+    2: "情報処理学科 情報処理プログラム専攻",
+    3: "情報処理学科 ネットワークセキュリティ専攻",
+  },
+  ミュージック学部2年制課程: {
+    1: "ミュージック学科 2年制課程",
+    2: "ミュージック学科 コンピュータミュージック専攻",
+    3: "ミュージック学科 PA・レコーディング専攻",
+  },
 };
 
 // input要素の取得
@@ -22,7 +98,6 @@ const inputGrade = document.getElementById("grade");
 const downloadButton = document.getElementById("downloadButton");
 
 // キャンバスの取得と設定
-const ratio = devicePixelRatio || 1;
 const canvas = document.getElementById("mainCanvas");
 const ctx = canvas.getContext("2d");
 
@@ -38,7 +113,7 @@ function initializeCanvas() {
 function renderCanvas(ctx, canvas, scale = 1) {
   // スケールに応じたサイズ計算
   const fontSize = {
-    department: DEPARTMENT_CHAR_SIZE * scale,
+    department: DEPARTMENT_CHAR_SIZE * scale + 4 * ratio,
     name: NAME_CHAR_SIZE * scale,
     nameKana: NAME_KANA_CHAR_SIZE * scale,
   };
@@ -49,25 +124,31 @@ function renderCanvas(ctx, canvas, scale = 1) {
     nameKana: NAME_KANA_MARGIN * scale,
   };
 
-  // 背景色を設定
-  ctx.fillStyle = "#ffffff";
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
-
   // 入力値の取得
   const name = inputName.value || "";
   const nameKana = inputNameKana.value || "";
-  const department = inputDepartment.value;
+  const departmentValue = inputDepartment.value;
   const grade = inputGrade.value;
-  const departmentString = `IT学部 ${
-    DEPARTMENT_MAP[department] || department
-  } ${grade}年`;
+
+  // departmentValueを分解して学部とコースIDを取得
+  let faculty, courseId, courseName;
+
+  [faculty, courseId] = departmentValue.split(":");
+  // 学部とコースIDからコース名を取得
+  courseName = DEPARTMENT_MAP[faculty][courseId];
+
+  const departmentString = `${courseName} ${grade}年`;
 
   // テキスト描画 - textBaselineを使わない統一方法
   ctx.textAlign = "right";
   ctx.fillStyle = "#333333";
 
   // 学科情報の描画
-  ctx.font = `900 ${fontSize.department}px "GenShinGothic"`;
+  ctx.font = `900 ${
+    departmentString.length > DEPARTMENT_LENGTH_THRESHOLD
+      ? (fontSize.department / 4) * 3
+      : fontSize.department
+  }px "GenShinGothic"`;
   const deptMetrics = ctx.measureText(departmentString);
   // テキストの高さ情報を取得（下に向かって負の値になる）
   const deptHeight =
@@ -105,13 +186,16 @@ function renderCanvas(ctx, canvas, scale = 1) {
 
 // キャンバスの更新関数を単純化
 function updateCanvas() {
-  renderCanvas(ctx, canvas, ratio);
+  // 背景色を設定
+  ctx.fillStyle = "#ffffff";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
 
   // 背景画像とロゴを描画
   const backgroundImage = new Image();
   backgroundImage.src = "img/ZoomBackground_base_2.png";
   backgroundImage.onload = () => {
     ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height);
+    renderCanvas(ctx, canvas, ratio);
 
     // ロゴの描画
     const schoolLogo = new Image();
@@ -134,8 +218,8 @@ function updateCanvas() {
 
 inputName.addEventListener("input", updateCanvas);
 inputNameKana.addEventListener("input", updateCanvas);
-inputDepartment.addEventListener("input", updateCanvas);
-inputGrade.addEventListener("input", updateCanvas);
+inputDepartment.addEventListener("change", updateCanvas);
+inputGrade.addEventListener("change", updateCanvas);
 
 // 再描画処理
 window.addEventListener("resize", handleResize);
@@ -167,15 +251,21 @@ downloadButton.addEventListener("click", () => {
     // 入力値の取得
     const name = inputName.value || "";
     const nameKana = inputNameKana.value || "";
-    const department = inputDepartment.value;
+    const departmentValue = inputDepartment.value;
     const grade = inputGrade.value;
-    const departmentString = `IT学部 ${
-      DEPARTMENT_MAP[department] || department
-    } ${grade}年`;
+
+    // departmentValueを分解して学部とコースIDを取得
+    let faculty, courseId, courseName;
+
+    [faculty, courseId] = departmentValue.split(":");
+    // 学部とコースIDからコース名を取得
+    courseName = DEPARTMENT_MAP[faculty][courseId];
+
+    const departmentString = `${courseName} ${grade}年`;
 
     // フォントサイズを明示的に設定
     const fontSize = {
-      department: DEPARTMENT_CHAR_SIZE * UPSCALE_FACTOR,
+      department: DEPARTMENT_CHAR_SIZE * UPSCALE_FACTOR + 4 * ratio,
       name: NAME_CHAR_SIZE * UPSCALE_FACTOR,
       nameKana: NAME_KANA_CHAR_SIZE * UPSCALE_FACTOR,
     };
@@ -191,7 +281,11 @@ downloadButton.addEventListener("click", () => {
     bufferCtx.fillStyle = "#333333";
 
     // 学科情報の描画
-    bufferCtx.font = `900 ${fontSize.department}px "GenShinGothic"`;
+    bufferCtx.font = `900 ${
+      departmentString.length > DEPARTMENT_LENGTH_THRESHOLD
+        ? (fontSize.department / 4) * 3
+        : fontSize.department
+    }px "GenShinGothic"`;
     const deptMetrics = bufferCtx.measureText(departmentString);
     const deptHeight =
       deptMetrics.actualBoundingBoxAscent +
@@ -262,7 +356,8 @@ const imageMakerSection = document.getElementById("imageMaker");
 
 // チェックボックスの状態を確認して画像生成セクションの表示を切り替える関数
 function checkAgreement() {
-  if (agreementCheckbox.checked) {
+  if (true) {
+    // if (agreementCheckbox.checked) {
     imageMakerSection.style.display = "block";
     // 初期化処理
     initializeCanvas();
@@ -272,8 +367,47 @@ function checkAgreement() {
   }
 }
 
+// DEPARTMENT_MAPからselect要素を動的に生成する関数
+function populateDepartmentSelect() {
+  const departmentSelect = document.getElementById("department");
+
+  // 既存のオプションをクリア
+  departmentSelect.innerHTML = "";
+
+  // 各学部（optgroup）をループ処理
+  for (const faculty in DEPARTMENT_MAP) {
+    // 学部のoptgroupを作成
+    const optgroup = document.createElement("optgroup");
+    optgroup.label = faculty;
+
+    // 各コース（option）をループ処理
+    const courses = DEPARTMENT_MAP[faculty];
+    for (const courseId in courses) {
+      // コースのoptionを作成
+      const option = document.createElement("option");
+      // 「学部:コースID」形式の値を設定
+      option.value = `${faculty}:${courseId}`;
+      option.textContent = courses[courseId];
+
+      // optgroupにoptionを追加
+      optgroup.appendChild(option);
+    }
+
+    // selectにoptgroupを追加
+    departmentSelect.appendChild(optgroup);
+  }
+}
+
 // 初期表示時にチェック
-checkAgreement();
+document.addEventListener("DOMContentLoaded", function () {
+  // 学部・学科選択肢の自動生成
+  populateDepartmentSelect();
+
+  // 他の初期化処理
+  checkAgreement();
+  initializeCanvas();
+  updateCanvas();
+});
 
 // チェックボックスの状態変化を監視
 agreementCheckbox.addEventListener("change", checkAgreement);
