@@ -233,11 +233,13 @@ input {
   border-radius: 0.5em;
   background-color: #f8f8f8;
   display: inline-block;
+  user-select: none;
 }
 
 .agreement input[type="checkbox"] {
   margin-right: 0.5em;
   transform: scale(1.2);
+  cursor: pointer;
 }
 
 .agreement label {
@@ -248,6 +250,7 @@ input {
   color: var(--main-theme-color);
   text-decoration: none;
   font-weight: bold;
+  cursor: pointer;
 }
 
 .agreement a:hover {
