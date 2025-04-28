@@ -415,8 +415,7 @@ const imageMakerSection = document.getElementById("imageMaker");
 
 // チェックボックスの状態を確認して画像生成セクションの表示を切り替える関数
 function checkAgreement() {
-  if (true) {
-    // if (agreementCheckbox.checked) {
+  if (agreementCheckbox.checked) {
     imageMakerSection.style.display = "block";
     // 初期化処理
     initializeCanvas();
