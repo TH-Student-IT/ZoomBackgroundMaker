@@ -1,9 +1,11 @@
 // MARK: 定数
+const ratio = devicePixelRatio || 1;
+
 const DEPARTMENT_CHAR_SIZE = 26; // 学部名 / 学科名のフォントサイズ
 const NAME_CHAR_SIZE = 36; // 名前のフォントサイズ
 const NAME_KANA_CHAR_SIZE = 18;
 
-const DEPARTMENT_MARGIN = 30; // 学部名 / 学科名のマージン
+const DEPARTMENT_MARGIN = 30 + 2 * ratio; // 学部名 / 学科名のマージン
 const NAME_KANA_MARGIN = 20; // 名前カナのマージン
 const DEFAULT_MARGIN = 20; // 名前のマージン
 
@@ -96,7 +98,6 @@ const inputGrade = document.getElementById("grade");
 const downloadButton = document.getElementById("downloadButton");
 
 // キャンバスの取得と設定
-const ratio = devicePixelRatio || 1;
 const canvas = document.getElementById("mainCanvas");
 const ctx = canvas.getContext("2d");
 
@@ -112,7 +113,7 @@ function initializeCanvas() {
 function renderCanvas(ctx, canvas, scale = 1) {
   // スケールに応じたサイズ計算
   const fontSize = {
-    department: DEPARTMENT_CHAR_SIZE * scale,
+    department: DEPARTMENT_CHAR_SIZE * scale + 4 * ratio,
     name: NAME_CHAR_SIZE * scale,
     nameKana: NAME_KANA_CHAR_SIZE * scale,
   };
@@ -263,7 +264,7 @@ downloadButton.addEventListener("click", () => {
 
     // フォントサイズを明示的に設定
     const fontSize = {
-      department: DEPARTMENT_CHAR_SIZE * UPSCALE_FACTOR,
+      department: DEPARTMENT_CHAR_SIZE * UPSCALE_FACTOR + 4 * ratio,
       name: NAME_CHAR_SIZE * UPSCALE_FACTOR,
       nameKana: NAME_KANA_CHAR_SIZE * UPSCALE_FACTOR,
     };
