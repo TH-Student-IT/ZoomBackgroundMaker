@@ -27,10 +27,12 @@
       <section class="agreement">
         <div class="agreement-content">
           <input type="checkbox" id="agreement" />
-          <label for="agreement"><a href="#" id="termsLink">利用規約</a>に同意する</label>
+          <label for="agreement"
+            ><a href="#" id="termsLink">利用規約</a>に同意する</label
+          >
         </div>
       </section>
-      
+
       <!-- 利用規約モーダル -->
       <div id="termsModal" class="modal">
         <div class="modal-content">
@@ -38,16 +40,24 @@
           <h2>利用規約</h2>
           <div class="terms-content">
             <h3>1. サービスの利用について</h3>
-            <p>このツールは、Zoom背景画像を生成するためのものです。主に就職活動などでの利用を想定しています。</p>
-            
+            <p>
+              このツールは、Zoom背景画像を生成するためのものです。主に就職活動などでの利用を想定しています。
+            </p>
+
             <h3>2. 個人情報の取り扱い</h3>
-            <p>入力された情報は画像生成のためだけに使用され、サーバーに保存されることはありません。</p>
-            
+            <p>
+              入力された情報は画像生成のためだけに使用され、サーバーに保存されることはありません。
+            </p>
+
             <h3>3. 免責事項</h3>
-            <p>本ツールを利用して生成された画像の使用によって生じたいかなる問題についても、製作者は責任を負いません。</p>
-            
+            <p>
+              本ツールを利用して生成された画像の使用によって生じたいかなる問題についても、製作者は責任を負いません。
+            </p>
+
             <h3>4. 著作権</h3>
-            <p>本ツールに関する著作権およびいその他の知的財産権は製作者に帰属します。本ツールを用いて生成された画像について、製作者は一切の権利を主張しません。ただし、ロゴ等の素材についての権利は各所有者に帰属します。</p>
+            <p>
+              本ツールに関する著作権およびいその他の知的財産権は製作者に帰属します。本ツールを用いて生成された画像について、製作者は一切の権利を主張しません。ただし、ロゴ等の素材についての権利は各所有者に帰属します。
+            </p>
           </div>
           <button id="acceptTerms" class="accept-button">同意する</button>
         </div>
@@ -57,20 +67,50 @@
         <div class="input-container">
           <h2>背景画像生成</h2>
           <h3 class="input-section-title">学籍情報</h3>
-          <label class="select department-select">
-            <select name="department" id="department">
-              <!-- 選択肢はJavaScriptで自動生成 -->
-            </select>
-          </label>
-          <label class="select grade-select">
-            <select name="grade" id="grade">
-              <option value="1">1年生</option>
-              <option value="2">2年生</option>
-              <option value="3">3年生</option>
-              <option value="4">4年生</option>
-            </select>
-          </label>
-          <h3 class="input-section-title">個人情報</h2>
+          <div class="input-mode-selector">
+            <label>
+              <input type="radio" name="input-mode" value="select" checked />
+              リストから選択
+            </label>
+            <label>
+              <input type="radio" name="input-mode" value="custom" /> 自分で入力
+            </label>
+          </div>
+
+          <!-- 選択モード用のコントロール -->
+          <div id="select-mode-controls">
+            <label class="select department-select">
+              <select name="department" id="department">
+                <!-- 選択肢はJavaScriptで自動生成 -->
+              </select>
+            </label>
+            <label class="select grade-select">
+              <select name="grade" id="grade">
+                <option value="1">1年生</option>
+                <option value="2">2年生</option>
+                <option value="3">3年生</option>
+                <option value="4">4年生</option>
+              </select>
+            </label>
+          </div>
+
+          <!-- カスタム入力モード用のコントロール（初期状態は非表示） -->
+          <div id="custom-mode-controls" style="display: none">
+            <div class="input-field">
+              <label for="customDepartment">学部/学科/コース</label>
+              <input
+                type="text"
+                id="customDepartment"
+                placeholder="例: 高度情報学科 AIシステム開発コース"
+              />
+            </div>
+            <div class="input-field">
+              <label for="customGrade">学年</label>
+              <input type="text" id="customGrade" placeholder="例: 3年" />
+            </div>
+          </div>
+
+          <h3 class="input-section-title">個人情報</h3>
           <div class="input-field">
             <label for="name">名前</label>
             <input type="text" id="name" placeholder="名前" />
@@ -79,13 +119,17 @@
             <label for="nameKana">名前（ふりがな）</label>
             <input type="text" id="nameKana" placeholder="ふりがな" />
           </div>
-    </div>
-  
+        </div>
+
         <canvas id="mainCanvas"></canvas>
         <button type="button" id="downloadButton">ダウンロード</button>
         <div class="contact-container">
           <p class="contact">ご要望やお問い合わせは以下のフォームから</p>
-          <p class="contact"><a href="https://syntck.com/contact" target="_blank">お問い合わせフォーム</a></p>
+          <p class="contact">
+            <a href="https://syntck.com/contact" target="_blank"
+              >お問い合わせフォーム</a
+            >
+          </p>
         </div>
       </section>
     </main>

@@ -95,6 +95,13 @@ const inputDepartment = document.getElementById("department");
 const inputGrade = document.getElementById("grade");
 const downloadButton = document.getElementById("downloadButton");
 
+// input要素の追加取得
+const inputModeRadios = document.querySelectorAll('input[name="input-mode"]');
+const selectModeControls = document.getElementById("select-mode-controls");
+const customModeControls = document.getElementById("custom-mode-controls");
+const inputCustomDepartment = document.getElementById("customDepartment");
+const inputCustomGrade = document.getElementById("customGrade");
+
 // キャンバスの取得と設定
 const ratio = devicePixelRatio || 1;
 const canvas = document.getElementById("mainCanvas");
@@ -126,17 +133,31 @@ function renderCanvas(ctx, canvas, scale = 1) {
   // 入力値の取得
   const name = inputName.value || "";
   const nameKana = inputNameKana.value || "";
-  const departmentValue = inputDepartment.value;
-  const grade = inputGrade.value;
 
-  // departmentValueを分解して学部とコースIDを取得
-  let faculty, courseId, courseName;
+  // 入力モードに応じて値を取得
+  const inputMode = document.querySelector(
+    'input[name="input-mode"]:checked'
+  ).value;
+  let departmentString = "";
 
-  [faculty, courseId] = departmentValue.split(":");
-  // 学部とコースIDからコース名を取得
-  courseName = DEPARTMENT_MAP[faculty][courseId];
+  if (inputMode === "select") {
+    // 選択モードの場合は既存ロジックを使用
+    const departmentValue = inputDepartment.value;
+    const grade = inputGrade.value;
 
-  const departmentString = `${courseName} ${grade}年`;
+    let faculty, courseId, courseName;
+    [faculty, courseId] = departmentValue.split(":");
+    courseName = DEPARTMENT_MAP[faculty][courseId];
+    departmentString = `${courseName} ${grade}年`;
+  } else {
+    // カスタム入力モードの場合
+    const customDept = inputCustomDepartment.value || "";
+    const customGrade = inputCustomGrade.value || "";
+    departmentString = customDept;
+    if (customGrade) {
+      departmentString += ` ${customGrade}`;
+    }
+  }
 
   // テキスト描画 - textBaselineを使わない統一方法
   ctx.textAlign = "right";
@@ -220,6 +241,32 @@ inputNameKana.addEventListener("input", updateCanvas);
 inputDepartment.addEventListener("change", updateCanvas);
 inputGrade.addEventListener("change", updateCanvas);
 
+// カスタム入力フィールドにイベントリスナーを追加
+inputCustomDepartment.addEventListener("input", updateCanvas);
+inputCustomGrade.addEventListener("input", updateCanvas);
+
+// モード切替ハンドラー設定
+inputModeRadios.forEach((radio) => {
+  radio.addEventListener("change", handleInputModeChange);
+});
+
+// 入力モードの変更を処理
+function handleInputModeChange() {
+  const selectedMode = document.querySelector(
+    'input[name="input-mode"]:checked'
+  ).value;
+
+  if (selectedMode === "select") {
+    selectModeControls.style.display = "block";
+    customModeControls.style.display = "none";
+  } else {
+    selectModeControls.style.display = "none";
+    customModeControls.style.display = "block";
+  }
+
+  updateCanvas(); // 表示を更新
+}
+
 // 再描画処理
 window.addEventListener("resize", handleResize);
 function handleResize() {
@@ -249,17 +296,29 @@ downloadButton.addEventListener("click", () => {
     // 入力値の取得
     const name = inputName.value || "";
     const nameKana = inputNameKana.value || "";
-    const departmentValue = inputDepartment.value;
-    const grade = inputGrade.value;
 
-    // departmentValueを分解して学部とコースIDを取得
-    let faculty, courseId, courseName;
+    // 入力モードに応じて値を取得
+    const inputMode = document.querySelector(
+      'input[name="input-mode"]:checked'
+    ).value;
+    let departmentString = "";
 
-    [faculty, courseId] = departmentValue.split(":");
-    // 学部とコースIDからコース名を取得
-    courseName = DEPARTMENT_MAP[faculty][courseId];
+    if (inputMode === "select") {
+      const departmentValue = inputDepartment.value;
+      const grade = inputGrade.value;
 
-    const departmentString = `${courseName} ${grade}年`;
+      let faculty, courseId, courseName;
+      [faculty, courseId] = departmentValue.split(":");
+      courseName = DEPARTMENT_MAP[faculty][courseId];
+      departmentString = `${courseName} ${grade}年`;
+    } else {
+      const customDept = inputCustomDepartment.value || "";
+      const customGrade = inputCustomGrade.value || "";
+      departmentString = customDept;
+      if (customGrade) {
+        departmentString += ` ${customGrade}`;
+      }
+    }
 
     // フォントサイズを明示的に設定
     const fontSize = {

@@ -192,6 +192,29 @@ input {
   flex: 1;
 }
 
+/* 入力モード選択用のスタイル */
+.input-mode-selector {
+  display: flex;
+  margin-bottom: 1em;
+  gap: 1.5em;
+}
+
+.input-mode-selector label {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.input-mode-selector input[type="radio"] {
+  margin-right: 0.5em;
+}
+
+#custom-mode-controls,
+#select-mode-controls {
+  margin-bottom: 1.5em;
+  transition: opacity 0.3s;
+}
+
 /* MARK: ダウンロードボタン */
 #downloadButton {
   display: block;
